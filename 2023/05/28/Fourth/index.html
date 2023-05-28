@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="AnxF-wj">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/05/28/fourth/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="实验四：区间树上重叠区间的查找算法(1)实验内容：对红黑树进行修改，使其成为一颗区间数，并实现区间树上的重叠区间查找算法。待查询区间应由控制台输入，控制台直接打印查找结果 (2)实验目的：通过实现红黑树的应用-区间树，来加深对红黑树的理解，并提高自己的编程能力，同时也能加深对区间树的理解。 (3)区间树的数据结构：区间树的节点结构需要在红黑树的基础上再添加一个区间属性，也就是interval属性，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RbTree Application of Interval Tree">
+<meta property="og:url" content="http://example.com/2023/05/28/Fourth/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="实验四：区间树上重叠区间的查找算法(1)实验内容：对红黑树进行修改，使其成为一颗区间数，并实现区间树上的重叠区间查找算法。待查询区间应由控制台输入，控制台直接打印查找结果 (2)实验目的：通过实现红黑树的应用-区间树，来加深对红黑树的理解，并提高自己的编程能力，同时也能加深对区间树的理解。 (3)区间树的数据结构：区间树的节点结构需要在红黑树的基础上再添加一个区间属性，也就是interval属性，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-05-28T13:31:14.000Z">
+<meta property="article:modified_time" content="2023-05-28T13:50:41.083Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Introduction to Algorithms">
+<meta name="twitter:card" content="summary">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/at.svg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/at.svg">
+    <meta name="theme-color" content="#1890FF">
+    <link rel="shortcut icon" href="/images/at.svg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            RbTree Application of Interval Tree -
+        
+        AnxF&#39;s blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/assets/fonts.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    let Global = window.Global || {};
+    Global.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN"};
+    Global.theme_config = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":true,"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#1890FF","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"busuanzi_counter":{"enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"pjax":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallpaper.webp","dark":"/images/wallpaper.webp"},"title":"当你为错过太阳而哭泣的时候，你也要再错过群星了。","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.1.4","navbar":{"auto_hide":false,"color":{"left":"#367df7","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Status":{"path":"https://status.evanluo.top/","icon":"fa-regular fa-chart-bar"},"About":{"icon":"fa-regular fa-user","submenus":{"Me":"/about","Github":"https://github.com/AnxF-wj","Blog":"https://anxf-wj.github.io/","Friends":"/friends","AnxF-wj":"https://anxf-wj.github.io/","CSDN":"https://blog.csdn.net/TomlikeC"}}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Tags":{"path":"/tags","icon":"fa-regular fa-tags"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"归档":{"path":"/archives","icon":"fa-regular fa-archive"},"标签":{"path":"/tags","icon":"fa-regular fa-tags"},"分类":{"path":"/categories","icon":"fa-regular fa-folder"}}},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}}};
+    Global.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    Global.data_config = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="main-content-container">
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                AnxF&#39;s blog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/archives"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-archive"></i>
+                                        
+                                        归档
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    target="_blank" rel="noopener" href="https://status.evanluo.top/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-chart-bar"></i>
+                                        
+                                        状态
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="has-dropdown" 
+                                    href="#" onClick="return false;">
+                                    
+                                        
+                                            <i class="fa-regular fa-user"></i>
+                                        
+                                        关于&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                                    <ul class="sub-menu">
+                                    
+                                        <li>
+                                        <a href="/about">ME
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a target="_blank" rel="noopener" href="https://github.com/AnxF-wj">GITHUB
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a target="_blank" rel="noopener" href="https://anxf-wj.github.io/">BLOG
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a href="/friends">友情链接
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a target="_blank" rel="noopener" href="https://anxf-wj.github.io/">ANXF-WJ
+                                        </a>
+                                        </li>
+                                    
+                                        <li>
+                                        <a target="_blank" rel="noopener" href="https://blog.csdn.net/TomlikeC">CSDN
+                                        </a>
+                                        </li>
+                                    
+                                    </ul>
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer">
+        <ul class="drawer-navbar-list">
+            
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="" 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="" 
+                        href="/archives"  >
+                             
+                                
+                                    <i class="fa-regular fa-archive"></i>
+                                
+                                归档
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="" 
+                        target="_blank" rel="noopener" href="https://status.evanluo.top/"  >
+                             
+                                
+                                    <i class="fa-regular fa-chart-bar"></i>
+                                
+                                状态
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+                
+                    <li class="drawer-navbar-item flex-center">
+                        <a class="has-dropdown" 
+                        href="#" onClick="return false;">
+                            
+                                
+                                    <i class="fa-regular fa-user"></i>
+                                
+                                关于&nbsp;<i class="fa-solid fa-chevron-down"></i>
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                              
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" href="/about">ME</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://github.com/AnxF-wj">GITHUB</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://anxf-wj.github.io/">BLOG</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" href="/friends">友情链接</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://anxf-wj.github.io/">ANXF-WJ</a>
+                            </li>
+                        
+                            <li class="dropdown-item flex-center">
+                                <a class="dropdown-item" target="_blank" rel="noopener" href="https://blog.csdn.net/TomlikeC">CSDN</a>
+                            </li>
+                        
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="post-page-container">
+        <div class="article-content-container">
+
+            
+            
+                <div class="article-title">
+                    <h1 class="article-title-regular">RbTree Application of Interval Tree</h1>
+                </div>
+            
+                
+            
+
+            
+                <div class="article-header">
+                    <div class="avatar">
+                        <img src="/images/avatar.jpg">
+                    </div>
+                    <div class="info">
+                        <div class="author">
+                            <span class="name">AnxF-wj</span>
+                            
+                                <span class="author-label">Lv1</span>
+                            
+                        </div>
+                        <div class="meta-info">
+                            <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-05-28 21:31:14</span>
+        <span class="mobile">2023-05-28 21:31</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-05-28 21:50:41</span>
+            <span class="mobile">2023-05-28 21:50</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Introduction-to-Algorithms/">Introduction to Algorithms</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            <div class="article-content markdown-body">
+                <h1 id="实验四：区间树上重叠区间的查找算法"><a href="#实验四：区间树上重叠区间的查找算法" class="headerlink" title="实验四：区间树上重叠区间的查找算法"></a>实验四：区间树上重叠区间的查找算法</h1><h2 id="1-实验内容："><a href="#1-实验内容：" class="headerlink" title="(1)实验内容："></a>(1)实验内容：</h2><p>对红黑树进行修改，使其成为一颗区间数，并实现区间树上的重叠区间查找算法。待查询区间应由控制台输入，控制台直接打印查找结果</p>
+<h2 id="2-实验目的："><a href="#2-实验目的：" class="headerlink" title="(2)实验目的："></a>(2)实验目的：</h2><p>通过实现红黑树的应用-区间树，来加深对红黑树的理解，并提高自己的编程能力，同时也能加深对区间树的理解。</p>
+<h2 id="3-区间树的数据结构："><a href="#3-区间树的数据结构：" class="headerlink" title="(3)区间树的数据结构："></a>(3)区间树的数据结构：</h2><p>区间树的节点结构需要在红黑树的基础上再添加一个区间属性，也就是interval属性，以及以某个节点为根的的子树中所有区间的端点的最大值即max_end属性，其余属性与红黑树一致即可。</p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NewNode</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, interval</span>):</span><br><span class="line">        self.interval = interval <span class="comment"># 区间值</span></span><br><span class="line">        self.color = <span class="number">1</span> <span class="comment"># 初始为红色 1：代表红色 0：代表黑色</span></span><br><span class="line">        self.left = <span class="literal">None</span> <span class="comment"># 左子树</span></span><br><span class="line">        self.right = <span class="literal">None</span> <span class="comment"># 右子树</span></span><br><span class="line">        self.max_end = interval[<span class="number">1</span>]  <span class="comment">#max</span></span><br><span class="line">        self.parent = <span class="literal">None</span> <span class="comment"># 父节点</span></span><br></pre></td></tr></table></figure></div>
+<h2 id="4-源码以及注释："><a href="#4-源码以及注释：" class="headerlink" title="(4)源码以及注释："></a>(4)源码以及注释：</h2><div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 区间树节点</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NewNode</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, interval</span>):</span><br><span class="line">        self.interval = interval <span class="comment"># 区间值</span></span><br><span class="line">        self.color = <span class="number">1</span> <span class="comment"># 初始为红色 1：代表红色 0：代表黑色</span></span><br><span class="line">        self.left = <span class="literal">None</span> <span class="comment"># 左子树</span></span><br><span class="line">        self.right = <span class="literal">None</span> <span class="comment"># 右子树</span></span><br><span class="line">        self.max_end = interval[<span class="number">1</span>]  <span class="comment">#max</span></span><br><span class="line">        self.parent = <span class="literal">None</span> <span class="comment"># 父节点</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IntervalTree</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.root = <span class="literal">None</span></span><br><span class="line">    <span class="comment"># 左旋操作</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">leftRotate</span>(<span class="params">self, x</span>):</span><br><span class="line">        y = x.right</span><br><span class="line">        x.right = y.left</span><br><span class="line">        <span class="keyword">if</span> y.left <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            y.left.parent = x</span><br><span class="line">        y.parent = x.parent</span><br><span class="line">        <span class="keyword">if</span> x.parent <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.root = y</span><br><span class="line">        <span class="keyword">elif</span> x == x.parent.left:</span><br><span class="line">            x.parent.left = y</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            x.parent.right = y</span><br><span class="line">        y.left = x</span><br><span class="line">        x.parent = y</span><br><span class="line">        y.max_end = x.max_end</span><br><span class="line">        <span class="comment"># 递归更新节点的max值</span></span><br><span class="line">        <span class="keyword">while</span> x != <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">if</span> x.right <span class="keyword">and</span> x.left:</span><br><span class="line">                x.max_end = <span class="built_in">max</span>(x.interval[<span class="number">1</span>],x.left.max_end,x.right.max_end)</span><br><span class="line">            <span class="keyword">elif</span> x.right:</span><br><span class="line">                x.max_end = <span class="built_in">max</span>(x.interval[<span class="number">1</span>],x.right.max_end)</span><br><span class="line">            <span class="keyword">elif</span> x.left:</span><br><span class="line">                x.max_end = <span class="built_in">max</span>(x.interval[<span class="number">1</span>],x.left.max_end)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                x.max_end = x.interval[<span class="number">1</span>]</span><br><span class="line">            x = x.parent</span><br><span class="line">    <span class="comment">#右旋操作</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">rightRotate</span>(<span class="params">self, y</span>):</span><br><span class="line">        x = y.left</span><br><span class="line">        y.left = x.right</span><br><span class="line">        <span class="keyword">if</span> x.right <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            x.right.parent = y</span><br><span class="line">        x.parent = y.parent</span><br><span class="line">        <span class="keyword">if</span> y.parent <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.root = x</span><br><span class="line">        <span class="keyword">elif</span> y == y.parent.left:</span><br><span class="line">            y.parent.left = x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            y.parent.right = x</span><br><span class="line">        x.right = y</span><br><span class="line">        y.parent = x</span><br><span class="line">        x.max_end = y.max_end</span><br><span class="line">        <span class="comment">#递归更新节点的max值</span></span><br><span class="line">        <span class="keyword">while</span> y != <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">if</span> y.right <span class="keyword">and</span> y.left:</span><br><span class="line">                y.max_end = <span class="built_in">max</span>(y.interval[<span class="number">1</span>], y.left.max_end, y.right.max_end)</span><br><span class="line">            <span class="keyword">elif</span> y.right :</span><br><span class="line">                y.max_end = <span class="built_in">max</span>(y.interval[<span class="number">1</span>],y.right.max_end)</span><br><span class="line">            <span class="keyword">elif</span> y.left:</span><br><span class="line">                y.max_end = <span class="built_in">max</span>(y.interval[<span class="number">1</span>],y.left.max_end)</span><br><span class="line">            <span class="keyword">else</span> :</span><br><span class="line">                y.max_end = y.interval[<span class="number">1</span>]</span><br><span class="line">            y = y.parent</span><br><span class="line">    <span class="comment"># 插入之后的调整操作</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">newInsertFixup</span>(<span class="params">self, z</span>):</span><br><span class="line">        <span class="keyword">while</span> z.parent <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> z.parent.color == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> z.parent == z.parent.parent.left: <span class="comment"># 父节点为左子树</span></span><br><span class="line">                y = z.parent.parent.right   <span class="comment"># 叔叔节点</span></span><br><span class="line">                <span class="keyword">if</span> y <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> y.color == <span class="number">1</span>:  <span class="comment"># 叔叔节点为红色</span></span><br><span class="line">                    z.parent.color = <span class="number">0</span> <span class="comment"># 将父节点置为黑色</span></span><br><span class="line">                    y.color = <span class="number">0</span> <span class="comment"># 将叔叔节点也置为黑色</span></span><br><span class="line">                    z.parent.parent.color = <span class="number">1</span> <span class="comment"># 将父节点的父节点置为红色</span></span><br><span class="line">                    z = z.parent.parent <span class="comment"># 向上递归 继续处理</span></span><br><span class="line">                    <span class="comment"># 情况1</span></span><br><span class="line">                <span class="keyword">else</span>: <span class="comment"># 叔叔节点为黑色</span></span><br><span class="line">                    <span class="keyword">if</span> z == z.parent.right: <span class="comment"># 为父节点的右节点</span></span><br><span class="line">                        z = z.parent <span class="comment"># 对父节点进行左旋调整</span></span><br><span class="line">                        self.leftRotate(z) <span class="comment"># 左旋</span></span><br><span class="line">                        <span class="comment"># 情况2</span></span><br><span class="line">                    z.parent.color = <span class="number">0</span> <span class="comment"># 将父节点置为黑色</span></span><br><span class="line">                    z.parent.parent.color = <span class="number">1</span> <span class="comment"># 将父节点的父节点置为红色</span></span><br><span class="line">                    self.rightRotate(z.parent.parent) <span class="comment"># 对父节点的父节点进行右旋处理</span></span><br><span class="line">                    <span class="comment"># 情况3</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                y = z.parent.parent.left <span class="comment"># 父节点为右子树</span></span><br><span class="line">                <span class="keyword">if</span> y <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> y.color == <span class="number">1</span>: <span class="comment"># 叔叔节点为红色</span></span><br><span class="line">                    z.parent.color = <span class="number">0</span> <span class="comment"># 将父节点置为黑色</span></span><br><span class="line">                    y.color = <span class="number">0</span> <span class="comment"># 将叔叔节点也置为黑色</span></span><br><span class="line">                    z.parent.parent.color = <span class="number">1</span> <span class="comment"># 将父节点的父节点置为红色</span></span><br><span class="line">                    z = z.parent.parent <span class="comment"># 向上递归 继续处理</span></span><br><span class="line">                    <span class="comment"># 情况4</span></span><br><span class="line">                <span class="keyword">else</span>: <span class="comment"># 叔叔节点为黑色</span></span><br><span class="line">                    <span class="keyword">if</span> z == z.parent.left: <span class="comment"># 为父节点的左节点</span></span><br><span class="line">                        z = z.parent <span class="comment"># 对父节点进行右旋调整</span></span><br><span class="line">                        self.rightRotate(z) <span class="comment"># 右旋</span></span><br><span class="line">                        <span class="comment"># 情况5</span></span><br><span class="line">                    z.parent.color = <span class="number">0</span> <span class="comment"># 将父节点置为黑色</span></span><br><span class="line">                    z.parent.parent.color = <span class="number">1</span> <span class="comment"># 将父节点的父节点置为红色</span></span><br><span class="line">                    self.leftRotate(z.parent.parent) <span class="comment"># 对父节点的父节点进行左旋处理</span></span><br><span class="line">                    <span class="comment"># 情况6</span></span><br><span class="line">        self.root.color = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 插入红黑树节点</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">insert</span>(<span class="params">self, interval</span>):</span><br><span class="line">        z = NewNode(interval) <span class="comment"># 创建节点</span></span><br><span class="line">        y = <span class="literal">None</span></span><br><span class="line">        x = self.root</span><br><span class="line">        <span class="keyword">while</span> x <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            y = x</span><br><span class="line">            <span class="keyword">if</span> z.interval[<span class="number">0</span>] &lt; x.interval[<span class="number">0</span>]:</span><br><span class="line">                x = x.left</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                x = x.right</span><br><span class="line">        z.parent = y</span><br><span class="line">        <span class="keyword">if</span> y <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.root = z</span><br><span class="line">        <span class="keyword">elif</span> z.interval[<span class="number">0</span>] &lt; y.interval[<span class="number">0</span>]:</span><br><span class="line">            y.left = z</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            y.right = z</span><br><span class="line">        z.max_end = z.interval[<span class="number">1</span>]</span><br><span class="line">        temp = z</span><br><span class="line">        <span class="comment">#递归更新父节点的max</span></span><br><span class="line">        <span class="keyword">while</span> z.parent != <span class="literal">None</span>:</span><br><span class="line">            z.parent.max_end = <span class="built_in">max</span>(z.parent.max_end, z.max_end)</span><br><span class="line">            z = z.parent</span><br><span class="line"></span><br><span class="line">        self.newInsertFixup(temp)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inorderTraverse</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="keyword">if</span> node <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.inorderTraverse(node.left)</span><br><span class="line">            <span class="built_in">print</span>(node.interval)</span><br><span class="line">            <span class="built_in">print</span>(node.max_end)</span><br><span class="line">            self.inorderTraverse(node.right)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">overlaps</span>(<span class="params">self, interval</span>):</span><br><span class="line">        stack = [self.root]</span><br><span class="line">        <span class="comment"># 当前节点与目标区间重叠，将其添加到结果列表中</span></span><br><span class="line">        <span class="keyword">while</span> stack:</span><br><span class="line">            node = stack.pop()</span><br><span class="line">            <span class="keyword">if</span> node <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="comment"># 当前节点与查询区间重叠，加入返回结果中</span></span><br><span class="line">            <span class="keyword">if</span> node.interval[<span class="number">0</span>] &lt;= interval[<span class="number">1</span>] <span class="keyword">and</span> node.interval[<span class="number">1</span>] &gt;= interval[<span class="number">0</span>]:</span><br><span class="line">                res.append(node.interval)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 如果当前节点的左子树最大值大于区间的左端点，故可能包含重叠区间，则将其压入栈中继续查找</span></span><br><span class="line">            <span class="keyword">if</span> node.left <span class="keyword">and</span> node.left.max_end &gt;= interval[<span class="number">0</span>]:</span><br><span class="line">                stack.append(node.left)</span><br><span class="line">            tempnode = node.right</span><br><span class="line">            <span class="comment"># 递归查询右子树最小值</span></span><br><span class="line">            <span class="keyword">while</span> tempnode:</span><br><span class="line">                <span class="built_in">min</span> = tempnode.interval[<span class="number">0</span>]</span><br><span class="line">                tempnode = tempnode.left</span><br><span class="line">            <span class="comment">#若右子树最小值大于区间右端点，则必不可能有重叠区间</span></span><br><span class="line">            <span class="keyword">if</span> node.right <span class="keyword">and</span> <span class="built_in">min</span> &lt;= interval[<span class="number">1</span>]:</span><br><span class="line">                stack.append(node.right)</span><br><span class="line">        <span class="comment"># 返回结果列表</span></span><br><span class="line"></span><br><span class="line">res = []  <span class="comment"># 结果列表</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    data = []</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 导入数据</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;insert.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        num_intervals = <span class="built_in">int</span>(f.readline().strip())</span><br><span class="line">        intervals = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num_intervals):</span><br><span class="line">            start, end = <span class="built_in">map</span>(<span class="built_in">int</span>, f.readline().strip().split())</span><br><span class="line">            intervals.append((start, end))</span><br><span class="line"></span><br><span class="line">    tree = IntervalTree()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> intervals:</span><br><span class="line">        tree.insert(item)</span><br><span class="line">    input_tup = <span class="built_in">input</span>(<span class="string">&quot;输入区间，使用逗号分割：&quot;</span>) <span class="comment"># 输入字符串元组</span></span><br><span class="line">    tup = <span class="built_in">eval</span>(input_tup) <span class="comment"># 将字符串转为元组</span></span><br><span class="line">    tree.overlaps(tup)</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></div>
+<h2 id="（5）实验过程中遇到的困难以及收获："><a href="#（5）实验过程中遇到的困难以及收获：" class="headerlink" title="（5）实验过程中遇到的困难以及收获："></a>（5）实验过程中遇到的困难以及收获：</h2><p>难点：<br>对红黑树转化为区间树的调整不熟悉，由于开始画图画错了区间树，导致浪费了大量时间做无用功。<br>收获：<br>深入理解了红黑树的应用。通过实现区间树重叠区间查询算法，更深入地理解区间树，加深对数据结构和算法的理解和掌握。<br>提高了我的编程能力，加强了我的问题解决能力。</p>
+
+            </div>
+
+            
+                <div class="post-copyright-info">
+                    <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> RbTree Application of Interval Tree</li>
+        <li><strong>作者:</strong> AnxF-wj</li>
+        <li><strong>创建于:</strong> 2023-05-28 21:31:14</li>
+        
+            <li>
+                <strong>更新于:</strong> 2023-05-28 21:50:41
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://anxf-wj.github.io/2023/05/28/Fourth/
+        </li>
+        <li>
+            <strong>版权声明:</strong> 本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a> 进行许可。
+        </li>
+    </ul>
+</div>
+
+                </div>
+            
+
+            
+                <ul class="post-tags-box">
+                    
+                        <li class="tag-item">
+                            <a href="/tags/Introduction-to-Algorithms/">#Introduction to Algorithms</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            
+
+            
+
+            
+                <div class="article-nav">
+                    
+                    
+                        <div class="article-next">
+                            <a class="next"
+                            rel="next"
+                            href="/2023/05/26/RbTree/"
+                            >
+                                <span class="title flex-center">
+                                    <span class="post-nav-title-item">RbTree</span>
+                                    <span class="post-nav-item">下一篇</span>
+                                </span>
+                                <span class="right arrow-icon flex-center">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </span>
+                            </a>
+                        </div>
+                    
+                </div>
+            
+
+
+            
+                <div class="comment-container">
+                    <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+ 
+    <div id="waline"></div>
+    <script type="module"  data-pjax>
+        import { init } from 'https://evan.beee.top/js/waline.mjs';
+
+        function loadWaline() {
+            init({
+                el: '#waline',
+                serverURL: 'https://example.example.com',
+                lang: 'zh-CN',
+                dark: 'body[class~="dark-mode"]',
+                requiredMeta: ['nick','mail'], // cannot customize by theme config, change it yourself
+            });
+        }
+
+        if ('true') {
+            const loadWalineTimeout = setTimeout(() => {
+                loadWaline();
+                clearTimeout(loadWalineTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadWaline);
+        }
+        
+    </script>
+
+
+
+        
+    
+</div>
+
+                </div>
+            
+        </div>
+
+        
+            <div class="toc-content-container">
+                <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">RbTree Application of Interval Tree</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%9B%EF%BC%9A%E5%8C%BA%E9%97%B4%E6%A0%91%E4%B8%8A%E9%87%8D%E5%8F%A0%E5%8C%BA%E9%97%B4%E7%9A%84%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95"><span class="nav-text">实验四：区间树上重叠区间的查找算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9%EF%BC%9A"><span class="nav-text">(1)实验内容：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84%EF%BC%9A"><span class="nav-text">(2)实验目的：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%8C%BA%E9%97%B4%E6%A0%91%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%EF%BC%9A"><span class="nav-text">(3)区间树的数据结构：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%BA%90%E7%A0%81%E4%BB%A5%E5%8F%8A%E6%B3%A8%E9%87%8A%EF%BC%9A"><span class="nav-text">(4)源码以及注释：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E5%9B%B0%E9%9A%BE%E4%BB%A5%E5%8F%8A%E6%94%B6%E8%8E%B7%EF%BC%9A"><span class="nav-text">（5）实验过程中遇到的困难以及收获：</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+            </div>
+        
+    </div>
+</div>
+
+
+                
+
+            </div>
+            
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">AnxF-wj</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv" class="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv" class="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv" class="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+       
+        </div>
+        
+        
+        
+            <div id="start_div" style="display:none">
+                2023/5/21 13:14:05
+            </div>
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <div class="customize-info info-item">纵然伤心，也不要愁眉不展，因为你不知是谁会爱上你的笑容。</div>
+        
+        
+            <script async data-pjax>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-expand-width flex-center">
+            <i class="fa-regular fa-expand"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/layouts/navbarShrink.js"></script>
+
+<script src="/js/tools/scrollTopBottom.js"></script>
+
+<script src="/js/tools/lightDarkSwitch.js"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/layouts/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js"></script>
+
+
+
+
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/tools/tocToggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/layouts/toc.js"></script>
+
+<script src="/js/plugins/tabs.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax',
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            Global.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            Global.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            Global.refresh();
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>
